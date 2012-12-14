@@ -24,12 +24,14 @@ object Json4sBuild extends Build {
         "Implementation-Vendor" -> vendor
       )
   }
-
-  val publishSetting = publishTo <<= (version) { version: String =>
-    if (version.trim.endsWith("SNAPSHOT"))
+  
+  val sdNexus = "SD Repository" at "http://192.168.1.200:8081/nexus/content/repositories/releases"
+  
+  val publishSetting = publishTo <<= (version) { version: String => Some(sdNexus)
+    /*if (version.trim.endsWith("SNAPSHOT"))
       Some(sonatypeNexusSnapshots)
     else
-      Some(sonatypeNexusStaging)
+      Some(sonatypeNexusStaging)*/
   }
 
   val mavenCentralFrouFrou = Seq(
@@ -53,11 +55,11 @@ object Json4sBuild extends Build {
 
   val json4sSettings = Defaults.defaultSettings ++ mavenCentralFrouFrou ++ Seq(
     organization := "org.json4s",
-    version := "3.1.0-SNAPSHOT",
-    scalaVersion := "2.10.0-RC2",
-    crossScalaVersions := Seq("2.9.2", "2.10.0-RC2"),
+    version := "3.1.0",//remove -SNAPSHOT to publish SD Repository
+    scalaVersion := "2.10.0-RC5",
+    crossScalaVersions := Seq("2.9.2", "2.10.0-RC5"),
     scalacOptions ++= Seq("-unchecked", "-deprecation", "-optimize"),
-    javacOptions ++= Seq("-target", "1.6", "-source", "1.6"),
+    javacOptions ++= Seq("-target", "1.7", "-source", "1.7"),
     manifestSetting,
     publishSetting,
     resolvers ++= Seq( sonatypeNexusSnapshots, sonatypeNexusReleases),
