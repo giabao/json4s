@@ -25,7 +25,7 @@ object Json4sBuild extends Build {
       )
   }
   
-  val sdNexus = "SD Repository" at "http://192.168.1.200:8081/nexus/content/repositories/releases"
+  val sdNexus = "SD Repository" at "http://192.168.1.200:8081/nexus/content/repositories/thirdparty/"
   
   val publishSetting = publishTo <<= (version) { version: String => Some(sdNexus)
     /*if (version.trim.endsWith("SNAPSHOT"))
@@ -55,7 +55,7 @@ object Json4sBuild extends Build {
 
   val json4sSettings = Defaults.defaultSettings ++ mavenCentralFrouFrou ++ Seq(
     organization := "org.json4s",
-    version := "3.1.0",//remove -SNAPSHOT to publish SD Repository
+    version := "3.1.0-SNAPSHOT",
     scalaVersion := "2.10.0-RC5",
     crossScalaVersions := Seq("2.9.2", "2.10.0-RC5"),
     scalacOptions ++= Seq("-unchecked", "-deprecation", "-optimize"),
