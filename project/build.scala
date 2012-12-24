@@ -56,20 +56,14 @@ object Json4sBuild extends Build {
   val json4sSettings = Defaults.defaultSettings ++ mavenCentralFrouFrou ++ Seq(
     organization := "org.json4s",
     version := "3.1.0-SNAPSHOT",
-    scalaVersion := "2.10.0-RC5",
-    crossScalaVersions := Seq("2.9.2", "2.10.0-RC5"),
-    scalacOptions ++= Seq("-unchecked", "-deprecation", "-optimize"),
+    scalaVersion := "2.10.0",
+    crossScalaVersions := Seq("2.10.0"),
+    scalacOptions ++= Seq("-unchecked", "-deprecation", "-optimize", "-feature", "-Yinline-warnings", "-language:existentials", "-language:implicitConversions", "-language:higherKinds", "-language:reflectiveCalls", "-language:postfixOps"),
     javacOptions ++= Seq("-target", "1.7", "-source", "1.7"),
     manifestSetting,
     publishSetting,
     resolvers ++= Seq( sonatypeNexusSnapshots, sonatypeNexusReleases),
-    crossVersion := CrossVersion.full,
-    artifact in (Compile, packageBin) <<= (artifact in Compile, scalaVersion) { (art: Artifact, sv) =>
-      sv match {
-        case "2.9.2" => art.copy(classifier = Some("scalaz7"))
-        case _ => art
-      }
-    }
+    crossVersion := CrossVersion.binary
   )
 
   lazy val root = Project(
@@ -142,7 +136,7 @@ object Json4sBuild extends Build {
   lazy val scalazExt = Project(
     id = "json4s-scalaz",
     base = file("scalaz"),
-    settings = json4sSettings ++ Seq(libraryDependencies <+= scalaVersion(scalaz_core))
+    settings = json4sSettings ++ Seq(libraryDependencies += scalaz_core)
   ) dependsOn(core % "compile;test->test", native % "provided->compile", jacksonSupport % "provided->compile")
 
   lazy val mongo = Project(
@@ -150,7 +144,7 @@ object Json4sBuild extends Build {
      base = file("mongo"),
      settings = json4sSettings ++ Seq(
        libraryDependencies ++= Seq(
-         "org.mongodb" % "mongo-java-driver" % "2.9.1"
+         "org.mongodb" % "mongo-java-driver" % "2.10.1"
       )
      )
   ) dependsOn(core % "compile;test->test")
@@ -158,7 +152,7 @@ object Json4sBuild extends Build {
   lazy val json4sTests = Project(
     id = "json4s-tests",
     base = file("tests"),
-    settings = json4sSettings ++ Seq(libraryDependencies <++= scalaVersion { sv => Seq(specs(sv), scalacheck(sv), mockito) })
+    settings = json4sSettings ++ Seq(libraryDependencies ++= Seq(specs, scalacheck, mockito))
   ) dependsOn(core, native, json4sExt, scalazExt, jacksonSupport, mongo)
 
 

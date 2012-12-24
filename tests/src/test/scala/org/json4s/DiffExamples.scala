@@ -77,4 +77,5 @@ abstract class DiffExamples[T](mod: String) extends Specification with JsonMetho
 
   private def read(resource: String) =
     parse(getClass.getResourceAsStream(resource))
+
 }

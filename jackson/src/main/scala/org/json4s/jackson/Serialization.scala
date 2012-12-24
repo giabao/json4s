@@ -2,6 +2,7 @@ package org.json4s
 package jackson
 
 import reflect.Manifest
+import com.fasterxml.jackson.databind.DeserializationFeature
 
 /** Functions to serialize and deserialize a case class.
  * Custom serializer can be inserted if a class is not a case class.
@@ -41,11 +42,16 @@ object Serialization extends Serialization {
 
   /** Deserialize from a String.
    */
-  def read[A](json: String)(implicit formats: Formats, mf: Manifest[A]): A =
-    JsonMethods.parse(json).extract(formats, mf)
+  def read[A](json: String, useBigDecimalForDouble: Boolean = false)(implicit formats: Formats, mf: Manifest[A]): A =
+    JsonMethods.parse(json, useBigDecimalForDouble).extract(formats, mf)
 
   /** Deserialize from a Reader.
    */
-  def read[A](in: Reader)(implicit formats: Formats, mf: Manifest[A]): A =
+  def read[A](in: Reader, useBigDecimalForDouble: Boolean)(implicit formats: Formats, mf: Manifest[A]): A = {
+    JsonMethods.mapper.configure(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS, useBigDecimalForDouble)
     JsonMethods.mapper.readValue[JValue](in, classOf[JValue]).extract(formats, mf)
+  }
+  /** Deserialize from a Reader.
+   */
+  def read[A](in: Reader)(implicit formats: Formats, mf: Manifest[A]): A = read[A](in, false)
 }
